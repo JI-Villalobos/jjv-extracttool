@@ -1,5 +1,8 @@
 package org.jjv.views;
 
+import org.jjv.collections.FileType;
+import org.jjv.instance.PathInstance;
+
 import javax.swing.*;
 import java.awt.Color;
 
@@ -20,7 +23,7 @@ public class InitialView extends JFrame {
         setTitle("Iniciar Extracción");
         initComponents();
 
-        chooseFileButton.addActionListener(e -> FileDialog.showFileDialog(this, "Selecciona tu archivo"));
+        chooseFileButton.addActionListener(e -> setTargetFilePath());
     }
 
     private void initComponents() {
@@ -98,5 +101,13 @@ public class InitialView extends JFrame {
         );
 
         pack();
+    }
+
+    private void setTargetFilePath(){
+        System.out.println(FileType.PDF.getExtension());
+        boolean selectedPath =FileDialog.showFileDialog(this, "Selecciona tu archivo", FileType.PDF);
+
+        if (selectedPath)
+            System.out.println(PathInstance.getPath());
     }
 }
