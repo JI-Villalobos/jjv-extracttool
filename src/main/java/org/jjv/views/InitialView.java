@@ -1,14 +1,18 @@
 package org.jjv.views;
 
+import com.adobe.pdfservices.operation.exception.ServiceApiException;
 import org.jjv.collections.FileType;
 import org.jjv.instance.PathInstance;
+import org.jjv.service.ExtractData;
 
 import javax.swing.*;
 import java.awt.Color;
+import java.io.IOException;
 
 import static javax.swing.GroupLayout.*;
 import static javax.swing.GroupLayout.Alignment.*;
 import static javax.swing.LayoutStyle.ComponentPlacement.*;
+import static org.jjv.service.ExtractData.*;
 
 public class InitialView extends JFrame {
     private JButton chooseFileButton;
@@ -104,10 +108,22 @@ public class InitialView extends JFrame {
     }
 
     private void setTargetFilePath(){
-        System.out.println(FileType.PDF.getExtension());
         boolean selectedPath =FileDialog.showFileDialog(this, "Selecciona tu archivo", FileType.PDF);
 
-        if (selectedPath)
-            System.out.println(PathInstance.getPath());
+        if (selectedPath){
+            try {
+                ExtractTextTable();
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Se generaron los resultados de la extraccion de datos",
+                        "Exito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (ServiceApiException | IOException e) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No fue posible ejecutar el servicio",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
     }
 }
