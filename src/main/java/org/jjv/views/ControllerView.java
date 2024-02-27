@@ -15,4 +15,9 @@ public class ControllerView {
         InitialView initialView = new InitialView();
         initialView.setVisible(true);
     }
+
+    public static void connectProgressView(){
+        ProgressView progressView = new ProgressView();
+        progressView.setVisible(true);
+    }
 }

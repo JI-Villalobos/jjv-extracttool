@@ -2,12 +2,16 @@ package org.jjv.views;
 
 import com.adobe.pdfservices.operation.exception.ServiceApiException;
 import org.jjv.collections.FileType;
+import org.jjv.instance.LogCollectedInstance;
 import org.jjv.instance.PathInstance;
 import org.jjv.service.ExtractData;
 
 import javax.swing.*;
 import java.awt.Color;
 import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static javax.swing.GroupLayout.*;
 import static javax.swing.GroupLayout.Alignment.*;
@@ -22,9 +26,13 @@ public class InitialView extends JFrame {
     private JPanel panel;
     private JLabel selectModelLabel;
 
+    private boolean isJobExecuting;
+
     public InitialView(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Iniciar Extracción");
+        setTitle("Iniciar Servicio");
+        setResizable(false);
+        setLocationRelativeTo(null);
         initComponents();
 
         chooseFileButton.addActionListener(e -> setTargetFilePath());
@@ -49,9 +57,8 @@ public class InitialView extends JFrame {
         chooseFileButton.setForeground(new Color(255, 255, 255));
         chooseFileButton.setText("Choose File");
 
-        logTextArea.setEditable(false);
         logTextArea.setColumns(20);
-        logTextArea.setForeground(new Color(15, 48, 87));
+        logTextArea.setForeground(Color.BLACK);
         logTextArea.setRows(5);
         logTextArea.setEnabled(false);
         jScrollPane1.setViewportView(logTextArea);
@@ -111,19 +118,24 @@ public class InitialView extends JFrame {
         boolean selectedPath =FileDialog.showFileDialog(this, "Selecciona tu archivo", FileType.PDF);
 
         if (selectedPath){
-            try {
+            ControllerView.connectProgressView();
+
+            /*try {
                 ExtractTextTable();
                 JOptionPane.showMessageDialog(
                         this,
                         "Se generaron los resultados de la extraccion de datos",
                         "Exito", JOptionPane.INFORMATION_MESSAGE);
             } catch (ServiceApiException | IOException e) {
+                isJobExecuting = false;
                 JOptionPane.showMessageDialog(
                         this,
                         "No fue posible ejecutar el servicio",
                         "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            }*/
+
         }
 
     }
+
 }

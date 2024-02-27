@@ -14,6 +14,7 @@ import com.adobe.pdfservices.operation.pdfjobs.params.extractpdf.ExtractPDFParam
 import com.adobe.pdfservices.operation.pdfjobs.result.ExtractPDFResult;
 import org.apache.commons.io.IOUtils;
 import org.jjv.Globals;
+import org.jjv.instance.LogCollectedInstance;
 import org.jjv.instance.PathInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,28 +38,37 @@ public class ExtractData {
     public static void ExtractTextTable() throws IOException, ServiceApiException {
         InputStream inputStream = Files.newInputStream(new File(PathInstance.getPath()).toPath());
 
+        LogCollectedInstance.addLog("Setting credentials...");
         Credentials credentials = new ServicePrincipalCredentials(System.getenv(CLIENT_ENV), System.getenv(SECRET_ENV));
         PDFServices pdfServices = new PDFServices(credentials);
 
+        LogCollectedInstance.addLog("Uploading to PDF Services...");
         Asset asset = pdfServices.upload(inputStream, PDFServicesMediaType.PDF.getMediaType());
         ExtractPDFParams extractPDFParams = ExtractPDFParams.extractPDFParamsBuilder()
                 .addElementsToExtract(Arrays.asList(ExtractElementType.TEXT, ExtractElementType.TABLES))
                 .build();
 
+        LogCollectedInstance.addLog("Initializing extracting job...");
         ExtractPDFJob extractPDFJob = new ExtractPDFJob(asset).setParams(extractPDFParams);
 
+        LogCollectedInstance.addLog("Waiting for service response...");
         String location = pdfServices.submit(extractPDFJob);
         PDFServicesResponse<ExtractPDFResult> pdfServicesResponse = pdfServices.getJobResult(location, ExtractPDFResult.class);
 
+        LogCollectedInstance.addLog("Getting content...");
         Asset resultAsset = pdfServicesResponse.getResult().getResource();
         StreamAsset streamAsset = pdfServices.getContent(resultAsset);
 
         String outputFilePath = createOutputFilePath();
         LOGGER.info(String.format("Saving asset at %s", outputFilePath));
 
+        LogCollectedInstance.addLog(String.format("Saving asset at %s", outputFilePath));
+
         OutputStream outputStream = Files.newOutputStream(new File(outputFilePath).toPath());
         IOUtils.copy(streamAsset.getInputStream(), outputStream);
         outputStream.close();
+
+        LogCollectedInstance.addLog("Operation finalized...");
     }
 
     private static String createOutputFilePath() throws IOException {
