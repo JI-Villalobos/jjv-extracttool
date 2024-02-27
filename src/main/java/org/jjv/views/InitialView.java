@@ -1,22 +1,19 @@
 package org.jjv.views;
 
-import com.adobe.pdfservices.operation.exception.ServiceApiException;
 import org.jjv.collections.FileType;
-import org.jjv.instance.LogCollectedInstance;
-import org.jjv.instance.PathInstance;
-import org.jjv.service.ExtractData;
 
 import javax.swing.*;
-import java.awt.Color;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static javax.swing.GroupLayout.*;
-import static javax.swing.GroupLayout.Alignment.*;
-import static javax.swing.LayoutStyle.ComponentPlacement.*;
-import static org.jjv.service.ExtractData.*;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.GroupLayout.Alignment.TRAILING;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
+import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static org.jjv.instance.LogCollectedInstance.getLogs;
 
 public class InitialView extends JFrame {
     private JButton chooseFileButton;
@@ -36,6 +33,13 @@ public class InitialView extends JFrame {
         initComponents();
 
         chooseFileButton.addActionListener(e -> setTargetFilePath());
+
+        this.addWindowFocusListener(new WindowAdapter() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                loadLogs();
+            }
+        });
     }
 
     private void initComponents() {
@@ -58,9 +62,9 @@ public class InitialView extends JFrame {
         chooseFileButton.setText("Choose File");
 
         logTextArea.setColumns(20);
-        logTextArea.setForeground(Color.BLACK);
+        logTextArea.setForeground(new Color(0,0,0));
         logTextArea.setRows(5);
-        logTextArea.setEnabled(false);
+        logTextArea.setEnabled(true);
         jScrollPane1.setViewportView(logTextArea);
 
         GroupLayout panelLayout = new GroupLayout(panel);
@@ -119,23 +123,17 @@ public class InitialView extends JFrame {
 
         if (selectedPath){
             ControllerView.connectProgressView();
-
-            /*try {
-                ExtractTextTable();
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Se generaron los resultados de la extraccion de datos",
-                        "Exito", JOptionPane.INFORMATION_MESSAGE);
-            } catch (ServiceApiException | IOException e) {
-                isJobExecuting = false;
-                JOptionPane.showMessageDialog(
-                        this,
-                        "No fue posible ejecutar el servicio",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }*/
-
         }
 
     }
 
+    private void loadLogs(){
+        List<String> logs = getLogs();
+        if (logs == null){
+            logTextArea.setText("-----------JJV PDF Extract Toll--------------");
+        } else {
+            logs.forEach(log -> logTextArea.append("- " + log + "\r\n"));
+        }
+
+    }
 }

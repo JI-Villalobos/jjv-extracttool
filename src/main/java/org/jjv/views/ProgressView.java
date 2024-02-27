@@ -2,26 +2,17 @@ package org.jjv.views;
 
 import com.adobe.pdfservices.operation.exception.ServiceApiException;
 import org.jjv.instance.LogCollectedInstance;
-import org.jjv.service.ExtractData;
 
 import javax.swing.*;
-
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import static javax.swing.GroupLayout.*;
-import static javax.swing.GroupLayout.Alignment.*;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
-import static javax.swing.SwingConstants.*;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.SwingConstants.CENTER;
-import static javax.swing.WindowConstants.*;
-import static org.jjv.service.ExtractData.*;
+import static org.jjv.service.ExtractData.ExtractTextTable;
 
 public class ProgressView extends JFrame {
     private JLabel label;
@@ -104,6 +95,7 @@ public class ProgressView extends JFrame {
                        if (checkLogStatus() == 7)
                            value = 100;
                    } catch (InterruptedException e) {
+                       LogCollectedInstance.addLog("Error Extraction failed");
                        throw new RuntimeException(e);
                    }
                }
