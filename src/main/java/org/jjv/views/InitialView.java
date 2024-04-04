@@ -1,11 +1,14 @@
 package org.jjv.views;
 
 import org.jjv.collections.FileType;
+import org.jjv.instance.PathInstance;
+import org.jjv.service.Decompress;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.List;
 
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -38,6 +41,7 @@ public class InitialView extends JFrame {
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 loadLogs();
+                unzipFile();
             }
         });
     }
@@ -130,10 +134,21 @@ public class InitialView extends JFrame {
     private void loadLogs(){
         List<String> logs = getLogs();
         if (logs == null){
-            logTextArea.setText("-----------JJV PDF Extract Toll--------------");
+            logTextArea.setText("-----------JJV PDF Extract Tool--------------");
         } else {
             logs.forEach(log -> logTextArea.append("- " + log + "\r\n"));
         }
 
+    }
+
+    private void unzipFile(){
+        if (PathInstance.getTarget() != null){
+            try {
+                Decompress.apply();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "An Error occurred and was not possible unzip the file",
+                        "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }

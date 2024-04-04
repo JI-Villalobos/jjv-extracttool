@@ -60,6 +60,7 @@ public class ExtractData {
         StreamAsset streamAsset = pdfServices.getContent(resultAsset);
 
         String outputFilePath = createOutputFilePath();
+        PathInstance.setTarget(outputFilePath);
         LOGGER.info(String.format("Saving asset at %s", outputFilePath));
 
         LogCollectedInstance.addLog(String.format("Saving asset at %s", outputFilePath));
