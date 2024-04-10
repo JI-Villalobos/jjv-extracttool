@@ -78,26 +78,23 @@ public class ProgressView extends JFrame {
     }
 
     private void updateProgressBar(){
-       Thread t = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               int value = 0;
-               progressBar.setValue(value);
+       Thread t = new Thread(() -> {
+           int value = 0;
+           progressBar.setValue(value);
 
-               while (value < 100){
-                   try {
-                       Thread.sleep(2000);
-                       progressBar.setValue(value);
-                       if (checkLogStatus() > 1) {
-                           value = checkLogStatus() * 10;
-                           label.setText(LogCollectedInstance.getLogs().get(checkLogStatus() - 1));
-                       }
-                       if (checkLogStatus() == 7)
-                           value = 100;
-                   } catch (InterruptedException e) {
-                       LogCollectedInstance.addLog("Error Extraction failed");
-                       throw new RuntimeException(e);
+           while (value < 100){
+               try {
+                   Thread.sleep(2000);
+                   progressBar.setValue(value);
+                   if (checkLogStatus() > 1) {
+                       value = checkLogStatus() * 10;
+                       label.setText(LogCollectedInstance.getLogs().get(checkLogStatus() - 1));
                    }
+                   if (checkLogStatus() == 7)
+                       value = 100;
+               } catch (InterruptedException e) {
+                   LogCollectedInstance.addLog("Error Extraction failed");
+                   throw new RuntimeException(e);
                }
            }
        });
@@ -111,16 +108,13 @@ public class ProgressView extends JFrame {
     }
 
     private void executeTask(JFrame frame){
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.out.println("trying");
-                    ExtractTextTable();
-                    frame.dispose();
-                } catch (ServiceApiException | IOException e) {
-                    System.out.println(e.getMessage());
-                }
+        Thread t = new Thread(() -> {
+            try {
+                ExtractTextTable();
+                LogCollectedInstance.clean();
+                frame.dispose();
+            } catch (ServiceApiException | IOException e) {
+                System.out.println(e.getMessage());
             }
         });
         t.start();

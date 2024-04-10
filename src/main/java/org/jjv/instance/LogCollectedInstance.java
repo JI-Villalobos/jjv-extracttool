@@ -15,4 +15,8 @@ public class LogCollectedInstance {
 
         logs.add(log);
     }
+
+    public static void clean() {
+        logs.clear();
+    }
 }
